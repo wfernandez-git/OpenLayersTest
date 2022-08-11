@@ -1,0 +1,162 @@
+﻿@page
+@model IndexModel
+@{
+	ViewData["Title"] = "Home page";
+}
+<style>
+	html, body {
+		font-family: sans-serif;
+		width: 100%;
+	}
+
+	.map {
+		height: 800px;
+		width: 100%;
+		border: 1px solid #CCCCCC;
+	}
+
+</style>
+<div class="card mt-3">
+	<div class="card-header h4">
+		Okta Token for MapService calls
+	</div>
+	<div class="card-body">
+		<div class="container">
+			<div class="row">
+				<div class="col-2">
+					<button type="button" id="bntOktaToken" class="btn btn-outline-primary">New Okta Token</button>
+				</div>
+				<div class="col-10">
+					<div class="col" style="font-weight:bold">Current Value:</div>
+					<div id="oktaTokenCurrentValue">@Model.Okta_Access_Token</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="card mt-3">
+	<div class="card-header h4">
+		GeoServer Client Security
+	</div>
+	<div class="card-body">
+		<div class="container">
+			<div class="row">
+				<div class="col-2">
+					<button type="button" id="bntCreateSecurity" class="btn btn-outline-primary">Create Security</button>
+				</div>
+				<div class="col-10">
+					<div class="col" style="font-weight:bold">Results:</div>
+					<pre id="goeserverResults"></pre>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="card mt-3">
+	<div class="card-header h4" >
+		OpenLayers Map
+		<div class="btn-group btn-group-toggle float-end" data-toggle="buttons" id="map_buttons_container">
+			<label class="btn btn-secondary">
+				<input type="radio" name="options" id="option1" autocomplete="off" checked title="WY Agreements">WMS Tile
+			</label>
+			<label class="btn btn-secondary">
+				<input type="radio" name="options" id="option2" autocomplete="off" title="New York Roads">TMS Vector Tile
+			</label>
+			<label class="btn btn-secondary">
+				<input type="radio" name="options" id="option3" autocomplete="off" title="States">WFS Vector
+			</label>
+			<label class="btn btn-secondary active">
+				<input type="radio" name="options" id="option4" autocomplete="off" title="Texas Surveys">WFS Vector from ArcGIS
+			</label>
+		</div>
+	</div>
+	<div class="card-body">
+		<div class="container">
+
+			<div id="map" class="map"></div>
+		</div>
+	</div>
+</div>
+
+
+
+<div id="info">&nbsp;</div>
+
+@section Scripts
+{
+
+<script type="text/javascript">
+	var projection_epsg_no = '4326';
+	var arcGISServerWFSBaseUrl = 'https://qhougis201-v.qdev.net/arcgis/services/CORE_DEV17/GEO_SRCH/MapServer/WFSServer?service=WFS&';
+	var localURLbase = "@Url.Page("/index")";
+</script>
+<script type="text/javascript" src="~/js/noCORS/MapService.js"></script>
+<script type="text/javascript" src="~/js/openLayersStyles.js"></script>
+<script type="text/javascript" src="~/js/openLayersCustomLoaders.js"></script>
+<script type="text/javascript" src="~/js/openLayers_Layers.js"></script>
+<script type="text/javascript">
+
+
+
+	  var view = new ol.View({
+		  projection: 'EPSG:'+projection_epsg_no,
+		  //center: [-106.9911, 41.3114],
+		  center: [-101.84, 35.23], //Amarillo TX
+		  //zoom: 10
+		  zoom: 12 //Amarillo TX
+	  });
+
+
+
+
+	var baseMapLayer = new ol.layer.Tile({
+			  source: new ol.source.XYZ({
+				  url:'http://{1-4}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+			  })
+		  });
+
+	var map = new ol.Map({
+	  target: 'map',
+	  view: view,
+	  layers: [
+		  baseMapLayer,
+		  //gsTMSVectorTileLayer,
+		  //gsWFSVectorTileLayer,
+		  //gsWMSTileLayer_WYAgreements,
+		  //esriWFSVectorLayer_TexasSurveys_Direct
+	  ],
+	});
+
+
+
+	  map.on('pointermove', function (evt) {
+		  if (evt.dragging) {
+			  return;
+		  }
+		  const data = gsWMSTileLayer_WYAgreements.getData(evt.pixel);
+		  const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+		  map.getTargetElement().style.cursor = hit ? 'pointer' : '';
+	  });
+
+	  map.on('singleclick', function (evt) {
+		  document.getElementById('info').innerHTML = '';
+		  const viewResolution = /** @@type {number} */ (view.getResolution());
+		  const url = gsWMSTileLayer_WYAgreements.getSource().getFeatureInfoUrl(
+			  evt.coordinate,
+			  viewResolution,
+			  'EPSG:'+projection_epsg_no,
+			  {'INFO_FORMAT': 'text/html'}
+		  );
+		  if (url) {
+			  var auth = { "Authorization" : 'Basic '+btoa('user_q12345:9ba68554d6184503')};
+			  fetch(url,{headers: auth})
+			  .then((response) => response.text())
+			  .then((html) => {
+				  document.getElementById('info').innerHTML = html;
+			  });
+		  }
+	  });
+</script>
+}

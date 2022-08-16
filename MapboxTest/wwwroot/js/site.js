@@ -26,3 +26,14 @@ $(document).ready(function () {
 
     $("#oktaTokenCurrentValue").text($.cookie("access_token"));
 });
+
+
+function showSpinner(show)
+{
+    if (show) {
+        $("#loadingSpinner").show();
+    }
+    else {
+        $("#loadingSpinner").hide();
+    }
+}

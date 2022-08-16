@@ -56,21 +56,32 @@
 
 <div class="card mt-3">
 	<div class="card-header h4" >
-		OpenLayers Map
+		<div class="float-start">
+			OpenLayers Map
+		</div>
+		<div class="spinner-border float-start mx-3" role="status" id="loadingSpinner" style="display:none;">
+			<span class="sr-only"></span>
+		</div>
+		
+		
 		<div class="btn-group btn-group-toggle float-end" data-toggle="buttons" id="map_buttons_container">
 			<label class="btn btn-secondary">
 				<input type="radio" name="options" id="option1" autocomplete="off" checked title="WY Agreements">WMS Tile
 			</label>
-			<label class="btn btn-secondary">
+			@*<label class="btn btn-secondary">
 				<input type="radio" name="options" id="option2" autocomplete="off" title="New York Roads">TMS Vector Tile
-			</label>
+			</label>*@
 			<label class="btn btn-secondary">
 				<input type="radio" name="options" id="option3" autocomplete="off" title="States">WFS Vector
 			</label>
 			<label class="btn btn-secondary active">
 				<input type="radio" name="options" id="option4" autocomplete="off" title="Texas Surveys">WFS Vector from ArcGIS
 			</label>
+
+
+
 		</div>
+		
 	</div>
 	<div class="card-body">
 		<div class="container">

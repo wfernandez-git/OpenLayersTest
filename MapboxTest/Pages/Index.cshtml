@@ -1,21 +1,31 @@
 ﻿@page
 @model IndexModel
 @{
-	ViewData["Title"] = "Home page";
+	ViewData["Title"] = "OpenLayers Demo";
 }
-<style>
-	html, body {
-		font-family: sans-serif;
-		width: 100%;
-	}
 
-	.map {
-		height: 800px;
-		width: 100%;
-		border: 1px solid #CCCCCC;
-	}
+@section Header
+{
+	<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css">
 
-</style>
+	<style>
+		html, body {
+			font-family: sans-serif;
+			width: 100%;
+		}
+
+		.map {
+			height: 800px;
+			width: 100%;
+			border: 1px solid #CCCCCC;
+		}
+
+	</style>
+}
+
+
+
 <div class="card mt-3">
 	<div class="card-header h4">
 		Okta Token for MapService calls
@@ -53,6 +63,26 @@
 		</div>
 	</div>
 </div>
+
+<div class="card mt-3">
+	<div class="card-header h4">
+		GeoServer Feature Classes
+	</div>
+	<div class="card-body">
+		<div class="container">
+			<div class="row">
+				<div class="col-2">
+					<button type="button" id="bntCreateFeatureTypes" class="btn btn-outline-primary">Create Features</button>
+				</div>
+				<div class="col-10">
+					<div class="col" style="font-weight:bold">Results:</div>
+					<div id="goeserverFCResults"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <div class="card mt-3">
 	<div class="card-header h4" >

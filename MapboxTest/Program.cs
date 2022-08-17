@@ -1,3 +1,6 @@
+using System.Net;
+using System.Net.Security;
+
 var builder = WebApplication.CreateBuilder(args);
 var _geoServerOrigins = "GeoServerOrigins";
 // Add services to the container.
@@ -38,3 +41,4 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
+

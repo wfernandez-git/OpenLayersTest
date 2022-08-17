@@ -1,0 +1,76 @@
+﻿@page
+@model MapboxTest.Pages.mapboxModel
+@{
+	ViewData["Title"] = "MapBox Demo";
+}
+
+@section Header
+{
+	<link href="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css" rel="stylesheet">
+	<script src="https://api.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js"></script>
+
+	<style>
+		body { margin: 0; padding: 0; }
+		#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+	</style>
+}
+
+
+<div id="map"></div>
+
+@section Scripts
+{
+
+	<script type="text/javascript">
+
+
+	// TO MAKE THE MAP APPEAR YOU MUST
+	// ADD YOUR ACCESS TOKEN FROM
+	// https://account.mapbox.com
+	mapboxgl.accessToken = 'pk.eyJ1IjoianVsaWVuLWxhbmRkb3giLCJhIjoiY2phMGVqaHJ2NjFrNDJ3bXZtcnFhYjB3ciJ9.3b7XL15CWw_OdUDn1GBQ2A';
+	const map = new mapboxgl.Map({
+		container: 'map',
+		style: 'mapbox://styles/mapbox/light-v10',
+		zoom: 8,
+		center: [-104.83, 41.14],
+		transformRequest: (url, resourceType)=> {
+			if(url.startsWith('http://localhost:8090/geoserver/workspace_q12345')) {
+				if (resourceType === 'Source' ||resourceType === 'Tile'){
+					return {
+						url: url,
+						headers: { 'Authorization': 'Basic ' + btoa('user_q12345:9ba68554d6184503')},
+						//credentials: 'include'  // Include cookies for cross-origin requests
+					}
+				}
+			}
+		}
+	});
+
+	map.on('load', () => {
+		map.addSource('wms-test-source', {
+			'type': 'vector',
+			// use the tiles option to specify a WMS tile source URL
+			// https://docs.mapbox.com/mapbox-gl-js/style-spec/sources/
+			'tiles': [
+				//'http://localhost:8090/geoserver/workspace_q12345/wms?bbox=-108.1%2C41%2C-105%2C45.1&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:4326&transparent=true&width=256&height=256&layers=q12345:WYAgreements'
+				//'http://localhost:8090/geoserver/workspace_q12345/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&LAYER=q12345:WYAgreements&STYLE=&TILEMATRIX=EPSG:4326:{z}&TILEMATRIXSET=EPSG:4326&FORMAT=application/vnd.mapbox-vector-tile&TILECOL={x}&TILEROW={y}'
+				'http://localhost:8090/geoserver/gwc/service/tms/1.0.0/tiger:tiger_roads@EPSG%3A900913@pbf/{z}/{x}/{-y}.pbf'
+			],
+			'minZoom': 0,
+			'maxZoom': 14,
+		});
+
+		map.addLayer(
+			{
+				'id': 'wms-test-layer',
+				'type': 'fill',
+				'source': 'wms-test-source',
+				'paint': {},
+				'source-layer': 'WYAgreements'
+			},
+			'aeroway-line'
+		);
+	});
+
+	</script>
+}

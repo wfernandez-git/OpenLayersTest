@@ -56,7 +56,9 @@ namespace MapboxTest.Pages
             var token = _context?.HttpContext?.Request.Cookies["access_token"];
             if (string.IsNullOrEmpty(token)) return new BadRequestObjectResult("The token was not found");
 
-            HttpClient httpClient = new HttpClient();
+
+            var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator };
+            HttpClient httpClient = new HttpClient(handler);
             var url = $"https://localhost:7071/api/geoserver/security?tenant_id={tenant_id}&product={product_id}";
 
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -90,7 +92,38 @@ namespace MapboxTest.Pages
         }
 
 
+        public async Task<IActionResult> OnGetCreateGeoServerLayersAsync(string featureName, string filter)
+        {
+            //Make sure that the token is available
+            var token = _context?.HttpContext?.Request.Cookies["access_token"];
+            if (string.IsNullOrEmpty(token)) return new BadRequestObjectResult("The token was not found");
 
+
+            var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator };
+            HttpClient httpClient = new HttpClient(handler);
+            var jsonBody = $@"{{
+                  ""featureType"": ""{featureName}"",
+                  ""filter"": ""{filter}"",
+                  ""minx"": -100.71954989327097,
+                  ""miny"": -78.8487969948206,
+                  ""maxx"": 146.80112537453005,
+                  ""maxy"": 79.88926711626783
+                }}";
+
+            var url = $"https://localhost:7071/api/geoserver/featuretype?tenant_id={tenant_id}&product={product_id}";
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var resp = await httpClient.PostAsync(url,new StringContent(jsonBody));
+
+            if (resp.IsSuccessStatusCode)
+            {
+                var txt = await resp.Content.ReadAsStringAsync();
+                //var gsCred = JsonConvert.DeserializeObject<GeoServerCredentials>(txt);
+                return new OkObjectResult(txt);
+            }
+            return new BadRequestObjectResult(resp.ReasonPhrase);
+        }
 
 
         class OktaToken

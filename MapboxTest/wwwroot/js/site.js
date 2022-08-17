@@ -22,7 +22,10 @@ $(document).ready(function () {
         CreateGeoserverSecurity();
         
     });
-
+    $("#bntCreateFeatureTypes").click(function () {
+        CreateGeoserverLayers();
+    });
+    
 
     $("#oktaTokenCurrentValue").text($.cookie("access_token"));
 });

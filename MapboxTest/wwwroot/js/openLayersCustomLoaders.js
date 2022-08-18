@@ -14,7 +14,7 @@
 		tile.setState(3);//TileState.ERROR
 	});
 	xhr.open('GET', src);
-	xhr.setRequestHeader("Authorization", 'Basic ' + btoa('user_q12345:9ba68554d6184503'))
+	xhr.setRequestHeader("Authorization", 'Basic ' + btoa('admin:geoserver'))
 	xhr.send();
 	showSpinner(false);
 }
@@ -22,7 +22,7 @@
 function customVectorTileLoad(tile, url) {
 
 	tile.setLoader(function (extent, resolution, projection) {
-		var auth = { "Authorization": 'Basic ' + btoa('user_q12345:9ba68554d6184503') };
+		var auth = { "Authorization": 'Basic ' + btoa('admin:geoserver') };
 		showSpinner(true);
 		fetch(url, { headers: auth }).then(function (response) {
 			response.arrayBuffer().then(function (data) {
@@ -46,7 +46,7 @@ function customFeatureLoader(extent, resolution, projection, success, failure) {
 		'bbox=' + extent.join(',') + ',' + proj;
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', url);
-	xhr.setRequestHeader("Authorization", 'Basic ' + btoa('user_q12345:9ba68554d6184503'))
+	xhr.setRequestHeader("Authorization", 'Basic ' + btoa('admin:geoserver'))
 	var onError = function () {
 		vs.removeLoadedExtent(extent);
 		failure();

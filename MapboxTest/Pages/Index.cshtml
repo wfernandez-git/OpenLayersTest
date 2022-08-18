@@ -194,7 +194,7 @@
 			  {'INFO_FORMAT': 'text/html'}
 		  );
 		  if (url) {
-			  var auth = { "Authorization" : 'Basic '+btoa('user_q12345:9ba68554d6184503')};
+			  var auth = { "Authorization" : 'Basic '+btoa('admin:geoserver')};
 			  fetch(url,{headers: auth})
 			  .then((response) => response.text())
 			  .then((html) => {

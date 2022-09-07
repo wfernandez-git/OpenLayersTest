@@ -2,6 +2,10 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "https://localhost/mapdemo",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:38868",
       "sslPort": 44358
@@ -14,7 +18,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5068",
+      "applicationUrl": "https://localhost:7254;http://localhost:5068",
       "dotnetRunMessages": true
     },
     "IIS Express": {
@@ -22,6 +26,14 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Profile 1": {
+      "commandName": "IIS",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost/mapdemo",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT ": " Development"
       }
     }
   }

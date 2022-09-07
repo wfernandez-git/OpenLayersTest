@@ -1,6 +1,6 @@
 ﻿//var gsWMSTileLayer_WYAgreements = new ol.layer.Tile({
 //    source: new ol.source.TileWMS({
-//        url: 'http://localhost:8090/geoserver/workspace_q12345/wms',
+//        url: geoserver_url+ 'workspace_q12345/wms',
 //        params: { 'LAYERS': 'q12345:WYAgreements', 'TILED': true },
 //        serverType: 'geoserver',
 //        tileLoadFunction: customTileLoad,
@@ -10,7 +10,7 @@
 
 var gsWMSTileLayer_WYAgreements = new ol.layer.Tile({
     source: new ol.source.TileWMS({
-        url: 'http://localhost:8090/geoserver/workspace_q12345/wms',
+        url: geoserver_url + 'workspace_q12345/wms',
         params: { 'LAYERS': 'workspace_q12345:WYAgreements', 'TILED': true, 'CRS':'EPSG:4326' },
         serverType: 'geoserver',
         projection: ol.proj.get('EPSG:' + projection_epsg_no),
@@ -27,7 +27,7 @@ var gsTMSVectorTileLayer = new ol.layer.VectorTile({
         tileGrid: ol.tilegrid.createXYZ({ maxZoom: 15 }),
         projection: ol.proj.get('EPSG:' + projection_epsg_no),
         format: new ol.format.MVT({ idProperty: 'iso_a3', featureClass: ol.Feature }),
-        url: 'http://localhost:8090/geoserver/gwc/service/tms/1.0.0/tiger:tiger_roads' +
+        url: geoserver_url + 'gwc/service/tms/1.0.0/tiger:tiger_roads' +
             '@EPSG%3A' + projection_epsg_no + '@pbf/{z}/{x}/{-y}.pbf',
         tileLoadFunction: customVectorTileLoad
     })
@@ -37,7 +37,7 @@ var gsTMSVectorTileLayer = new ol.layer.VectorTile({
 //    style: simpleStyle,
 //    source: new ol.source.Vector({
 //        format: new ol.format.GeoJSON(),
-//        url: 'http://localhost:8090/geoserver/workspace_q12345/wfs?service=WFS&' +
+//        url: geoserver_url+ 'workspace_q12345/wfs?service=WFS&' +
 //            'version=1.1.0&request=GetFeature&typename=states&' +
 //            'outputFormat=application/json',
 //        loader: customFeatureLoader,
@@ -70,7 +70,7 @@ function SetVisibleLayer(option) {
     });
     switch (option) {
         case 1:
-            SetLayerVisibilityHelper(gsWMSTileLayer_WYAgreements, [-106.94, 41.06], 8);
+            SetLayerVisibilityHelper(buildWMSLayerHelper('WYAgreements'), [-106.61, 41.3], 9);
             break;
         //case 2:
         //  SetLayerVisibilityHelper(gsTMSVectorTileLayer, [-74.0060, 40.7128], 12);
@@ -86,7 +86,13 @@ function SetVisibleLayer(option) {
             SetLayerVisibilityHelper(buildVectorTileHelper('Odd_Tracts'), [-106.164134, 41.330569], 9);
             break;
         case 5:
+            SetLayerVisibilityHelper(buildWMSLayerHelper('OddAndEven'), [-106.164134, 41.330569], 9);
+            break;
+        case 6:
             SetLayerVisibilityHelper(esriWFSVectorLayer_TexasSurveys_Direct, [-101.82, 35.32], 10);
+            break;
+        case 7:
+            SetLayerVisibilityHelper(buildWMSLayerHelperNonIsolated('demo:AcreageByState'), [-101.82, 35.32], 5);
             break;
         default:
             alert("Can't set the visible layer for " + option)
@@ -107,11 +113,37 @@ function buildVectorTileHelper(typeName) {
         style: simpleStyle,
         source: new ol.source.Vector({
             format: new ol.format.GeoJSON(),
-            url: 'http://localhost:8090/geoserver/workspace_q12345/wfs?service=WFS&' +
+            url: geoserver_url + 'workspace_q12345/wfs?service=WFS&' +
                 'version=1.1.0&request=GetFeature&typename=' + typeName + '&' +
                 'outputFormat=application/json',
             loader: customFeatureLoader,
             strategy: ol.loadingstrategy.bbox
+        })
+    });
+}
+
+function buildWMSLayerHelper(typeName) {
+    return new ol.layer.Tile({
+        source: new ol.source.TileWMS({
+            url: geoserver_url + 'workspace_q12345/wms',
+            params: { 'LAYERS': 'workspace_q12345:' + typeName, 'TILED': true, 'CRS': 'EPSG:4326' },
+            serverType: 'geoserver',
+            projection: ol.proj.get('EPSG:' + projection_epsg_no),
+            tileLoadFunction: customTileLoad,
+            transition: 0,
+        })
+    });
+}
+
+function buildWMSLayerHelperNonIsolated(typeName) {
+    return new ol.layer.Tile({
+        source: new ol.source.TileWMS({
+            url: geoserver_url + 'wms',
+            params: { 'LAYERS': typeName, 'TILED': true, 'CRS': 'EPSG:4326' },
+            serverType: 'geoserver',
+            projection: ol.proj.get('EPSG:' + projection_epsg_no),
+            tileLoadFunction: customTileLoad,
+            transition: 0,
         })
     });
 }

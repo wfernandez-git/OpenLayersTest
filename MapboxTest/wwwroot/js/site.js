@@ -25,6 +25,10 @@ $(document).ready(function () {
     $("#bntCreateFeatureTypes").click(function () {
         CreateGeoserverLayers();
     });
+
+    $("#bntCreateLayerGroup").click(function () {
+        CreateLayerGroup();
+    });
     
 
     $("#oktaTokenCurrentValue").text($.cookie("access_token"));

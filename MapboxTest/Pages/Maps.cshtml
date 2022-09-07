@@ -1,0 +1,139 @@
+﻿@page
+@model MapboxTest.Pages.MapsModel
+@{
+	ViewData["Title"] = "Demo Maps";
+}
+
+
+@section Header
+{
+	<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/build/ol.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.15.1/css/ol.css">
+
+	<style>
+		html, body {
+			font-family: sans-serif;
+			width: 100%;
+		}
+
+		.map {
+			height: 800px;
+			width: 100%;
+			border: 1px solid #CCCCCC;
+		}
+
+	</style>
+}
+
+
+
+<div class="card mt-3">
+	<div class="card-header h4" >
+		<div class="float-start">
+		</div>
+		<div class="spinner-border float-start mx-3" role="status" id="loadingSpinner" style="display:none;">
+			<span class="sr-only"></span>
+		</div>
+		
+		
+		<div class="btn-group btn-group-toggle" data-toggle="buttons" id="map_buttons_container">
+			<label class="btn btn-secondary">
+				<input type="radio" name="options" id="option1" autocomplete="off" checked title="WY Agreements">WMS Tile
+			</label>
+			@*<label class="btn btn-secondary">
+				<input type="radio" name="options" id="option2" autocomplete="off" title="New York Roads">TMS Vector Tile
+			</label>*@
+			<label class="btn btn-secondary">
+				<input type="radio" name="options" id="option2" autocomplete="off" title="WFS Vector - All">WFS Vector - All
+			</label>
+			<label class="btn btn-secondary">
+				<input type="radio" name="options" id="option3" autocomplete="off" title="WFS Vector - Even">WFS Vector - Even
+			</label>
+			<label class="btn btn-secondary">
+				<input type="radio" name="options" id="option4" autocomplete="off" title="WFS Vector - Odd">WFS Vector - Odd
+			</label>
+			<label class="btn btn-secondary ">
+				<input type="radio" name="options" id="option5" autocomplete="off" title="WMS - Group Layer">WMS - Group Layer
+			</label>
+			<label class="btn btn-secondary ">
+				<input type="radio" name="options" id="option6" autocomplete="off" title="Texas Surveys">ArcGIS - WFS Direct
+			</label>
+			<label class="btn btn-secondary">
+				<input type="radio" name="options" id="option7" autocomplete="off" checked title="Acreage By State">ArcGIS - WMS Cascade
+			</label>
+		</div>
+		
+	</div>
+	<div class="card-body">
+		<div class="container">
+
+			<div id="map" class="map"></div>
+		</div>
+	</div>
+</div>
+
+
+
+<div id="info">&nbsp;</div>
+
+
+@section Scripts
+{
+
+<script type="text/javascript" src="~/js/noCORS/MapService.js"></script>
+<script type="text/javascript" src="~/js/openLayersStyles.js"></script>
+<script type="text/javascript" src="~/js/openLayersCustomLoaders.js"></script>
+<script type="text/javascript" src="~/js/openLayers_Layers.js"></script>
+<script type="text/javascript">
+
+
+
+	  var view = new ol.View({
+		  projection: 'EPSG:'+projection_epsg_no,
+		  center: [-101.84, 35.23], //Amarillo TX
+		  zoom: 12 //Amarillo TX
+	  });
+
+	var baseMapLayer = new ol.layer.Tile({
+			  source: new ol.source.XYZ({
+				  url:'http://{1-4}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+			  })
+		  });
+
+	var map = new ol.Map({
+	  target: 'map',
+	  view: view,
+	  layers: [baseMapLayer],
+	});
+
+
+
+	  //map.on('pointermove', function (evt) {
+		 // if (evt.dragging) {
+			//  return;
+		 // }
+		 // const data = gsWMSTileLayer_WYAgreements.getData(evt.pixel);
+		 // const hit = data && data[3] > 0; // transparent pixels have zero for data[3]
+		 // map.getTargetElement().style.cursor = hit ? 'pointer' : '';
+	  //});
+
+	  //map.on('singleclick', function (evt) {
+		 // document.getElementById('info').innerHTML = '';
+		 // const viewResolution = /** @@type {number} */ (view.getResolution());
+		 // const url = gsWMSTileLayer_WYAgreements.getSource().getFeatureInfoUrl(
+			//  evt.coordinate,
+			//  viewResolution,
+			//  'EPSG:'+projection_epsg_no,
+			//  {'INFO_FORMAT': 'text/html'}
+		 // );
+		 // if (url) {
+			//  var auth = { "Authorization" : 'Basic '+btoa('admin:geoserver')};
+			//  fetch(url,{headers: auth})
+			//  .then((response) => response.text())
+			//  .then((html) => {
+			//	  document.getElementById('info').innerHTML = html;
+			//  });
+		 // }
+	  //});
+</script>
+}

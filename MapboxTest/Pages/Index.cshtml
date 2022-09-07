@@ -83,47 +83,24 @@
 	</div>
 </div>
 
-
 <div class="card mt-3">
-	<div class="card-header h4" >
-		<div class="float-start">
-			OpenLayers Map
-		</div>
-		<div class="spinner-border float-start mx-3" role="status" id="loadingSpinner" style="display:none;">
-			<span class="sr-only"></span>
-		</div>
-		
-		
-		<div class="btn-group btn-group-toggle float-end" data-toggle="buttons" id="map_buttons_container">
-			<label class="btn btn-secondary">
-				<input type="radio" name="options" id="option1" autocomplete="off" checked title="WY Agreements">WMS Tile
-			</label>
-			@*<label class="btn btn-secondary">
-				<input type="radio" name="options" id="option2" autocomplete="off" title="New York Roads">TMS Vector Tile
-			</label>*@
-			<label class="btn btn-secondary">
-				<input type="radio" name="options" id="option2" autocomplete="off" title="States">WFS Vector - All
-			</label>
-			<label class="btn btn-secondary">
-				<input type="radio" name="options" id="option3" autocomplete="off" title="States">WFS Vector - Even
-			</label>
-			<label class="btn btn-secondary">
-				<input type="radio" name="options" id="option4" autocomplete="off" title="States">WFS Vector - Odd
-			</label>
-			<label class="btn btn-secondary ">
-				<input type="radio" name="options" id="option5" autocomplete="off" title="Texas Surveys">WFS Vector from ArcGIS
-			</label>
-		</div>
-		
+	<div class="card-header h4">
+		GeoServer Layer Groups
 	</div>
 	<div class="card-body">
 		<div class="container">
-
-			<div id="map" class="map"></div>
+			<div class="row">
+				<div class="col-2">
+					<button type="button" id="bntCreateLayerGroup" class="btn btn-outline-primary">Create Layer Group</button>
+				</div>
+				<div class="col-10">
+					<div class="col" style="font-weight:bold">Results:</div>
+					<div id="goeserverGLResults"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
-
 
 
 <div id="info">&nbsp;</div>
@@ -132,8 +109,6 @@
 {
 
 <script type="text/javascript">
-	var projection_epsg_no = '4326';
-	var arcGISServerWFSBaseUrl = 'https://qhougis201-v.qdev.net/arcgis/services/CORE_DEV17/GEO_SRCH/MapServer/WFSServer?service=WFS&';
 	var localURLbase = "@Url.Page("/index")";
 </script>
 <script type="text/javascript" src="~/js/noCORS/MapService.js"></script>

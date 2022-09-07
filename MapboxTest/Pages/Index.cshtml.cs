@@ -92,7 +92,7 @@ namespace MapboxTest.Pages
         }
 
 
-        public async Task<IActionResult> OnGetCreateGeoServerLayersAsync(string featureName, string filter)
+        public async Task<IActionResult> OnGetCreateGeoServerLayersAsync(string featureName, string nativeName, string filter, bool omitTentantFilter = false)
         {
             //Make sure that the token is available
             var token = _context?.HttpContext?.Request.Cookies["access_token"];
@@ -103,11 +103,11 @@ namespace MapboxTest.Pages
             HttpClient httpClient = new HttpClient(handler);
             var jsonBody = $@"{{
                   ""featureType"": ""{featureName}"",
+                  ""nativeName"": ""{nativeName}"",
+                  ""nativeSRS"": ""EPSG:4326"",
+                  ""declaredSRS"": ""EPSG:4326"",
                   ""filter"": ""{filter}"",
-                  ""minx"": -100.71954989327097,
-                  ""miny"": -78.8487969948206,
-                  ""maxx"": 146.80112537453005,
-                  ""maxy"": 79.88926711626783
+                  ""omitTentantFilter"": {omitTentantFilter.ToString().ToLower()}
                 }}";
 
             var url = $"https://localhost:7071/api/geoserver/featuretype?tenant_id={tenant_id}&product={product_id}";
@@ -115,6 +115,51 @@ namespace MapboxTest.Pages
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var resp = await httpClient.PostAsync(url,new StringContent(jsonBody));
+
+            if (resp.IsSuccessStatusCode)
+            {
+                var txt = await resp.Content.ReadAsStringAsync();
+                //var gsCred = JsonConvert.DeserializeObject<GeoServerCredentials>(txt);
+                return new OkObjectResult(txt);
+            }
+            return new BadRequestObjectResult(resp.ReasonPhrase);
+        }
+
+        public async Task<IActionResult> OnGetCreateGeoServerLayerGroupAsync()
+        {
+            //Make sure that the token is available
+            var token = _context?.HttpContext?.Request.Cookies["access_token"];
+            if (string.IsNullOrEmpty(token)) return new BadRequestObjectResult("The token was not found");
+
+
+            /*
+             * public string name { get; set; }
+        public string title { get; set; }
+        public IEnumerable<string> layers { get; set; }
+        public decimal minx { get; set; } = 0;
+        public decimal maxx { get; set; } = 0;
+        public decimal miny { get; set; } = 0;
+        public decimal maxy { get; set; } = 0;*/
+
+
+
+            var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator };
+            HttpClient httpClient = new HttpClient(handler);
+            var jsonBody = $@"{{
+                  ""name"": ""OddAndEven"",
+                  ""title"": ""Combined Odd And Even"",
+                  ""layers"": [""Even_Tracts"",""Odd_Tracts""],
+                  ""minx"": 0,
+                  ""maxx"": 0,
+                  ""miny"": 0,
+                  ""maxy"": 0,
+                }}";
+
+            var url = $"https://localhost:7071/api/geoserver/layergroup?tenant_id={tenant_id}&product={product_id}";
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var resp = await httpClient.PostAsync(url, new StringContent(jsonBody));
 
             if (resp.IsSuccessStatusCode)
             {
